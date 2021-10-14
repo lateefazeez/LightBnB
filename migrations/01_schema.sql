@@ -44,6 +44,23 @@ CREATE TABLE property_reviews (
   guest_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   property_id INTEGER REFERENCES properties(id) ON DELETE CASCADE,
   reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
-  rating SMALLINT NOT NULL NOT NULL DEFAULT 0,
+  rating SMALLINT NOT NULL DEFAULT 0,
+  message TEXT
+);
+
+CREATE TABLE rates (
+  id SERIAL PRIMARY KEY NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  cost_per_night VARCHAR(255) NOT NULL,
+  property_id INTEGER REFERENCES properties(id) ON DELETE CASCADE
+);
+
+CREATE TABLE guest_reviews (
+  id SERIAL PRIMARY KEY NOT NULL,
+  guest_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  owner_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
+  rating SMALLINT NOT NULL DEFAULT 0,
   message TEXT
 );
