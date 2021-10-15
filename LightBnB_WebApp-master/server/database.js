@@ -1,7 +1,6 @@
-const properties = require('./json/properties.json');
-const users = require('./json/users.json');
-
 const { Pool } = require('pg');
+
+
 const pool = new Pool({
   user: 'vagrant',
   password: '123',
@@ -21,7 +20,7 @@ const getUserWithEmail = function(email) {
   return pool
     .query(`
       SELECT * FROM users;
-    `)
+    `,)
     .then(users => {
       let userData;
       users.rows.map(user => {
@@ -173,6 +172,29 @@ const addProperty = function(property) {
     })
     .catch(err => console.log(err.message));
 };
+exports.addProperty = addProperty;
+
+const addReservation = function(reservation) {
+  const guest_id = reservation.guest_id;
+  const property_id = reservation.property_id;
+  const start_date = reservation.start_date;
+  const end_date = reservation.end_date;
+
+  return pool
+    .query(`
+    INSERT INTO reservations (
+      guest_id, property_id, start_date, end_date) 
+      VALUES (
+      $1, $2, $3, $4)
+    RETURNING *;
+  `, [guest_id, property_id, start_date, end_date])
+    .then(reservation => {
+      console.log(reservation.rows);
+      return reservation.rows;
+    })
+    .catch(err => console.log(err.message));
+};
+exports.addReservation = addReservation;
 
 const searchProperties = (queryString, queryParams, options, limit) => {
   let result = {};
@@ -211,4 +233,4 @@ const searchProperties = (queryString, queryParams, options, limit) => {
   result['qParams'] = queryParams;
   return result;
 };
-exports.addProperty = addProperty;
+
